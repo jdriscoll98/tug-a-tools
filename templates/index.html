@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+    <title>Tug a Tools</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>Tug a Tools</h1>
+</header>
+<main>
+    <h1>Available Tools</h1>
+    <ul>
+        {% for tool in tools %}
+        <li>
+            <strong>{{ tool.name }}</strong> - {{ tool.description }}
+            [<a href="{{ url_for('request_tool', tool_id=tool.id) }}">Request</a>]
+        </li>
+        {% endfor %}
+    </ul>
+</main>
+</body>
+</html>
