@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+    <title>Request Sent</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>Tug a Tools</h1>
+</header>
+<main>
+    <h1>Request Confirmed</h1>
+    <p>Thank you {{ renter }} for requesting {{ tool.name }} for {{ days }} days.</p>
+    <p>Your quote: ${{ price }}</p>
+    <a href="{{ url_for('index') }}">Back to home</a>
+</main>
+</body>
+</html>
