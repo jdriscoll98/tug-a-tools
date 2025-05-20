@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuga Tools Rental</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        section { margin-bottom: 20px; }
+        label { display: block; margin-top: 10px; }
+        input, button { margin-top: 5px; }
+        #tools img { width: 100px; display: block; }
+    </style>
+</head>
+<body>
+    <h1>Tuga Tools Rental</h1>
+
+    <section id="auth">
+        <h2>Register</h2>
+        <label>Username <input type="text" id="reg-username"></label>
+        <label>Password <input type="password" id="reg-password"></label>
+        <button onclick="register()">Register</button>
+
+        <h2>Login</h2>
+        <label>Username <input type="text" id="log-username"></label>
+        <label>Password <input type="password" id="log-password"></label>
+        <button onclick="login()">Login</button>
+        <p id="token-display"></p>
+    </section>
+
+    <section id="tools">
+        <h2>Available Tools</h2>
+        <button onclick="loadTools()">Refresh Tools</button>
+        <ul id="tool-list"></ul>
+    </section>
+
+    <section id="booking">
+        <h2>Book a Tool</h2>
+        <label>Tool ID <input type="number" id="book-tool-id"></label>
+        <label>Start Date <input type="date" id="book-start"></label>
+        <label>End Date <input type="date" id="book-end"></label>
+        <button onclick="createBooking()">Book</button>
+    </section>
+
+<script>
+let token = null;
+
+function register() {
+    fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: document.getElementById('reg-username').value,
+            password: document.getElementById('reg-password').value
+        })
+    }).then(r => r.json()).then(data => alert(JSON.stringify(data)));
+}
+
+function login() {
+    fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: document.getElementById('log-username').value,
+            password: document.getElementById('log-password').value
+        })
+    }).then(r => r.json()).then(data => {
+        token = data.token;
+        document.getElementById('token-display').innerText = token ? 'Logged in as ' + token : 'Login failed';
+    });
+}
+
+function loadTools() {
+    fetch('/tools').then(r => r.json()).then(tools => {
+        const list = document.getElementById('tool-list');
+        list.innerHTML = '';
+        tools.forEach(t => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${t.name}</strong> - ${t.description} <br><img src="${t.image || ''}" alt="">`;
+            list.appendChild(li);
+        });
+    });
+}
+
+function createBooking() {
+    if (!token) { alert('Login first'); return; }
+    fetch('/bookings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Token': token
+        },
+        body: JSON.stringify({
+            tool_id: parseInt(document.getElementById('book-tool-id').value),
+            start_date: document.getElementById('book-start').value,
+            end_date: document.getElementById('book-end').value
+        })
+    }).then(r => r.json()).then(data => alert(JSON.stringify(data)));
+}
+</script>
+</body>
+</html>
